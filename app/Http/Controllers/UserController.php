@@ -2,22 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Blog;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
-class BlogController extends Controller
+class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $blogs = Blog::get();
+        $user = User::get();
 
         return response()->json([
-            'blogs' => $blogs
+            'user' => $user
         ]);
     }
 
@@ -35,12 +35,14 @@ class BlogController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'title' => 'required',
-            'image' => 'required|mimes:png,jpg,jpeg',
-            'description' => 'required',
-            'tags' => 'required',
-            'date' => 'required',
-            'author' => 'required|exists:users,id',
+            'name' => 'required',
+            'username' => 'required|unique:users,username',
+            'email' => 'required',
+            'dob' => 'required',
+            'phone' => 'required',
+            'profile' => 'required',
+            'password' => 'required',
+            'role' => 'required',
         ]);
 
         if($validator->fails()) {
@@ -52,21 +54,21 @@ class BlogController extends Controller
 
         $data = $request->all();
 
-        $data['date'] = Carbon::parse($data['date']);
+        $data['dob'] = Carbon::parse($data['dob']);
         
         if($request->hasFile('profile')) {
             $file = $request->file('profile');
             $file->move(public_path() . "/profile/$request->username/", "image.png");
         }
 
-        $slug = str()->slug($request->title);
-        $data['image'] = "/blog/$slug/image.png";
+        $data['profile'] = "/profile/$request->username/image.png";
 
-        $blog = Blog::create($request->all());
+        $user = User::create($data);
+        $user['profile'] = asset($user['profile']);
 
         return response()->json([
-            'message' => 'Blog created', 
-            'blog' => $blog
+            'message' => 'User created',
+            'user' => $user
         ]);
     }
 
@@ -75,16 +77,16 @@ class BlogController extends Controller
      */
     public function show(string $id)
     {
-        $blog = Blog::find($id);
+        $user = User::find($id);
 
-        if(!$blog) {
+        if(!$user) {
             return response()->json([
-                'message' => 'Blog not found'
+                'message' => 'User not found'
             ], 404);
         }
 
         return response()->json([
-            'blog' => $blog
+            'user' => $user
         ]);
     }
 
@@ -101,18 +103,18 @@ class BlogController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $blog = Blog::find($id);
+        $user = User::find($id);
 
-        if(!$blog) {
+        if(!$user) {
             return response()->json([
-                'message' => 'Blog not found'
+                'message' => 'User not found'
             ], 404);
         }
 
-        $blog->update($request->all());
+        $user->update($request->all());
 
         return response()->json([
-            'message' => "Blog updated"
+            'message' => 'User updated'
         ]);
     }
 
@@ -121,18 +123,18 @@ class BlogController extends Controller
      */
     public function destroy(string $id)
     {
-        $blog = Blog::find($id);
+        $user = User::find($id);
 
-        if(!$blog) {
+        if(!$user) {
             return response()->json([
-                'message' => 'Blog not found'
+                'message' => 'User not found'
             ], 404);
         }
 
-        $blog->delete();
-        
+        $user->delete();
+
         return response()->json([
-            'message' => "Blog deleted"
+            'message' => "User deleted" 
         ]);
     }
 }

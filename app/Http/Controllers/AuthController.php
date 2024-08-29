@@ -62,8 +62,8 @@ class AuthController extends Controller
 
         $data = $request->all();
 
-        $data['dob'] = Carbon::parse($data['dob']);
         $data['role'] = 'user';
+        $data['dob'] = Carbon::parse($data['dob']);
         
         if($request->hasFile('profile')) {
             $file = $request->file('profile');

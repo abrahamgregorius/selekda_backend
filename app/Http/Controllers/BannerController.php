@@ -65,7 +65,7 @@ class BannerController extends Controller
 
         if(!$banner) {
             return response()->json([
-                'message' => 'Not found'
+                'message' => 'Banner not found'
             ], 404);
         }
 
@@ -91,7 +91,7 @@ class BannerController extends Controller
 
         if(!$banner) {
             return response()->json([
-                'message' => 'Not found'
+                'message' => 'Banner not found'
             ], 404);
         }
 
@@ -111,7 +111,7 @@ class BannerController extends Controller
 
         if(!$banner) {
             return response()->json([
-                'message' => 'Not found'
+                'message' => 'Banner not found'
             ], 404);
         }
 
